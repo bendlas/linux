@@ -745,7 +745,7 @@ void intel_pipe_update_end(struct intel_atomic_state *state,
 	if (new_crtc_state->do_async_flip)
 		goto out;
 
-	scanline_end = intel_get_crtc_scanline(crtc);
+	scanline_end = __intel_get_crtc_scanline(crtc);
 	end_vbl_count = intel_crtc_get_vblank_counter(crtc);
 	end_vbl_time = ktime_get();
 
