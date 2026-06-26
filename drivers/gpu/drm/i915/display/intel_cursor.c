@@ -904,6 +904,7 @@ intel_legacy_cursor_update(struct drm_plane *_plane,
 	struct intel_crtc *pipe_crtc;
 	int num_pipes = 0;
 	u32 start_vbl_count, end_vbl_count;
+	bool has_vblank = false;
 	int ret;
 
 	/*
@@ -1031,6 +1032,8 @@ intel_legacy_cursor_update(struct drm_plane *_plane,
 	intel_psr_lock(crtc_state);
 
 	if (!drm_WARN_ON(display->drm, drm_crtc_vblank_get(&crtc->base))) {
+		has_vblank = true;
+
 		/*
 		 * TODO: maybe check if we're still in PSR
 		 * and skip the vblank evasion entirely?
@@ -1040,8 +1043,6 @@ intel_legacy_cursor_update(struct drm_plane *_plane,
 		local_irq_disable();
 
 		intel_vblank_evade(&evade);
-
-		drm_crtc_vblank_put(&crtc->base);
 	} else {
 		local_irq_disable();
 	}
@@ -1078,6 +1079,9 @@ intel_legacy_cursor_update(struct drm_plane *_plane,
 			start_vbl_count, end_vbl_count);
 
 	intel_psr_unlock(crtc_state);
+
+	if (has_vblank)
+		drm_crtc_vblank_put(&crtc->base);
 
 	/*
 	 * Schedule or immediately unpin old framebuffers.
