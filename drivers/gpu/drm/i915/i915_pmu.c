@@ -1164,7 +1164,7 @@ void i915_pmu_register(struct drm_i915_private *i915)
 	 * Disable pmu events on PREEMPT_RT entirely to prevent deadlocks.
 	 */
 	if (IS_ENABLED(CONFIG_PREEMPT_RT))
-		reeturn;
+		return;
 
 	spin_lock_init(&pmu->lock);
 	hrtimer_setup(&pmu->timer, i915_sample, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
